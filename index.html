@@ -1,48 +1,102 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>正在检测线路...</title>
-    <style>
-      body { font-family: sans-serif; text-align: center; padding: 3em; }
-      .tip { font-size: 1.2em; color: #444; margin-top: 1.5em; }
-    </style>
-  </head>
-  <body>
-    <h2>正在检测可用线路...</h2>
-    <p class="tip" id="tip">请稍候，正在为您选择最快线路</p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>URL 可用性检测中间页</title>
+  <style>
+    body {
+      font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: #222;
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      margin: 80px auto;
+      padding: 0 20px;
+    }
+    h1 {
+      font-size: 1.8em;
+      margin-bottom: 0.6em;
+    }
+    .highlight {
+      color: #e53935;
+      font-weight: bold;
+    }
+    .button {
+      display: inline-block;
+      margin-top: 1.2em;
+      padding: 0.6em 1.2em;
+      background: #1976d2;
+      color: white;
+      border-radius: 4px;
+      font-size: 1em;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button:hover {
+      background: #0f5cbf;
+    }
+    .status {
+      margin-top: 2em;
+      font-size: 1.1em;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>欢迎访问，正在自动匹配最佳线路访问官网</h1>
+    <p class="highlight">📌 收藏此页防止失联</p>
+    <a class="button" onclick="copyLink()">添加到收藏夹</a>
+    <p class="status" id="status">正在为您选择最佳线路...</p>
+  </div>
 
-    <script>
-      const ua = navigator.userAgent;
-      if (/MicroMessenger|QQ\/|baiduboxapp/i.test(ua)) {
-        document.body.innerHTML = "<h3 style='text-align:center;margin-top:3em'>请使用系统浏览器打开本页面，微信、QQ、百度内不支持跳转。</h3>";
-      } else {
-        const urls = [
-          "https://renyimen.top",
-          "https://fenghuolun.top",
-          "https://gravit.top"
-        ];
-
-        let jumped = false;
-        urls.forEach(url => {
-          const img = new Image();
-          img.src = url + "/1x1.png?t=" + Date.now();  // 新检测文件路径
-          img.onload = () => {
-            if (!jumped) {
-              jumped = true;
-              window.location.href = url;
-            }
-          };
-        });
-
-        setTimeout(() => {
+  <script>
+    // 防微信/QQ/百度内打开
+    const ua = navigator.userAgent;
+    if (/MicroMessenger|QQ\/|baiduboxapp/i.test(ua)) {
+      document.body.innerHTML = '<div class="container"><h1>⚠ 请在浏览器中打开</h1><p>微信、QQ、百度内无法访问跳转页，请点击右上角“...”，选择“浏览器打开”。</p></div>';
+    } else {
+      const urls = [
+        "https://renyimen.top",
+        "https://fenghuolun.top",
+        "https://gravit.top"
+      ];
+      let jumped = false;
+      urls.forEach(url => {
+        const img = new Image();
+        img.src = url + "/1x1.png?t=" + Date.now();
+        img.onload = () => {
           if (!jumped) {
-            document.getElementById("tip").innerText = "暂无可用线路，请稍后再试或联系客服。";
+            jumped = true;
+            document.getElementById("status").innerText = "正在跳转至：" + url;
+            setTimeout(() => {
+              window.location.href = url;
+            }, 800);
           }
-        }, 5000);
-      }
-    </script>
-  </body>
+        };
+      });
+
+      setTimeout(() => {
+        if (!jumped) {
+          document.getElementById("status").innerText = "暂无可用线路，请稍后再试或联系客服。";
+        }
+      }, 5000);
+    }
+
+    function copyLink() {
+      const dummy = document.createElement("input");
+      dummy.value = window.location.href;
+      document.body.appendChild(dummy);
+      dummy.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummy);
+      alert("已复制跳转页链接，可粘贴保存！");
+    }
+  </script>
+</body>
 </html>
