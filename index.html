@@ -28,7 +28,7 @@
         let jumped = false;
         urls.forEach(url => {
           const img = new Image();
-          img.src = url + "/favicon.ico?t=" + Date.now();
+          img.src = url + "/1x1.png?t=" + Date.now();  // 新检测文件路径
           img.onload = () => {
             if (!jumped) {
               jumped = true;
