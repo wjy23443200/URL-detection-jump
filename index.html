@@ -5,12 +5,50 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>线路检测</title>
-  <script defer src="/js/chunk-vendors.2b568997.js"></script><script defer src="/js/app.1c679c4f.js"></script><link href="/css/app.bb3adc51.css" rel="stylesheet"></head>
+    <script defer src="/js/chunk-vendors.2b568997.js"></script>
+    <script defer src="/js/app.1c679c4f.js"></script>
+    <link href="/css/app.bb3adc51.css" rel="stylesheet">
+  </head>
   <body>
     <noscript>
       <strong>很抱歉，如果没有启用 JavaScript，将无法正常工作。请启用它以继续。</strong>
     </noscript>
     <div id="app"></div>
-    <!-- 客服代码在这里替换 -->
+
+    <!-- 自定义跳转逻辑 -->
+    <script>
+      const ua = navigator.userAgent;
+      if (/MicroMessenger|QQ\/|baiduboxapp/i.test(ua)) {
+        document.body.innerHTML = "<h3 style='text-align:center;margin-top:3em'>请使用系统浏览器打开本页面，微信、QQ、百度内不支持跳转。</h3>";
+      } else {
+        const urls = [
+          "aHR0cHM6Ly9leGFtcGxlMS5jb20=",
+          "https://example2.org/"
+        ];
+        function decodeIfBase64(str) {
+          try {
+            return atob(str).startsWith("http") ? atob(str) : str;
+          } catch (e) {
+            return str;
+          }
+        }
+        let jumped = false;
+        urls.map(decodeIfBase64).forEach(url => {
+          const img = new Image();
+          img.src = url + "/favicon.ico?t=" + Date.now();
+          img.onload = () => {
+            if (!jumped) {
+              jumped = true;
+              window.location.href = url;
+            }
+          };
+        });
+        setTimeout(() => {
+          if (!jumped) {
+            document.body.innerHTML = "<h3 style='text-align:center;margin-top:3em'>暂无可用线路，请稍后再试。</h3>";
+          }
+        }, 5000);
+      }
+    </script>
   </body>
 </html>
