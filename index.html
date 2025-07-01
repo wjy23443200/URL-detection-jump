@@ -65,26 +65,11 @@
         "https://wjy23443200.top",
         "https://www.wjy23443200.top"
       ];
-      let jumped = false;
-      urls.forEach(url => {
-        const img = new Image();
-        img.src = url + "/1x1.png?t=" + Date.now();
-        img.onload = () => {
-          if (!jumped) {
-            jumped = true;
-            document.getElementById("status").innerText = "正在跳转至：" + url;
-            setTimeout(() => {
-              window.location.href = url;
-            }, 800);
-          }
-        };
-      });
-
+      const targetUrl = urls[0];
+      document.getElementById("status").innerText = "正在跳转至：" + targetUrl;
       setTimeout(() => {
-        if (!jumped) {
-          document.getElementById("status").innerText = "暂无可用线路，请稍后再试或联系客服。";
-        }
-      }, 5000);
+        window.location.href = targetUrl;
+      }, 800);
     }
 
     function copyLink() {
