@@ -1,86 +1,63 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>URL 可用性检测中间页</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>线路自动分配中...</title>
   <style>
-    body {
-      font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #fff;
-      color: #222;
-      text-align: center;
-    }
-    .container {
-      max-width: 600px;
-      margin: 80px auto;
-      padding: 0 20px;
-    }
-    h1 {
-      font-size: 1.8em;
-      margin-bottom: 0.6em;
-    }
-    .highlight {
-      color: #e53935;
-      font-weight: bold;
-    }
-    .button {
-      display: inline-block;
-      margin-top: 1.2em;
-      padding: 0.6em 1.2em;
-      background: #1976d2;
-      color: white;
-      border-radius: 4px;
-      font-size: 1em;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    .button:hover {
-      background: #0f5cbf;
-    }
-    .status {
-      margin-top: 2em;
-      font-size: 1.1em;
-      color: #444;
-    }
+    body { font-family: Arial, sans-serif; text-align: center; padding-top: 80px; }
+    .highlight { color: #e53935; font-weight: bold; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>欢迎访问，正在自动匹配最佳线路访问官网</h1>
-    <p class="highlight">📌 收藏此页防止失联</p>
-    <a class="button" onclick="copyLink()">点击复制网站到剪切板</a>
-    <p class="status" id="status">正在为您选择最佳线路...</p>
-  </div>
+  <h1>正在自动为您匹配最快线路...</h1>
+  <p class="highlight">请稍候 1~2 秒</p>
+  <p id="status">初始化中...</p>
 
-  <script>
-    // 防微信/QQ/百度内打开
-    const ua = navigator.userAgent;
-    if (/MicroMessenger|QQ\/|baiduboxapp|QQMail/i.test(ua)) {
-      document.body.innerHTML = '<div class="container"><h1>⚠ 请在浏览器中打开</h1><p>微信、QQ、百度内无法访问跳转页，请点击右上角“...”，选择“浏览器打开”。</p></div>';
+<script>
+const ua = navigator.userAgent;
+if (/MicroMessenger|QQ\/|baiduboxapp|QQMail/i.test(ua)) {
+  document.body.innerHTML = '<h1>⚠ 请用浏览器打开</h1><p>微信/QQ/百度内不支持加速跳转，请点右上角“...” → “浏览器打开”。</p>';
+} else {
+  const urls = [
+    "https://www.renyimen.sbs",
+    "https://renyimen.sbs",
+    "https://renyimen.cfd",
+    "https://www.renyimen.cfd",
+    "https://gravit.top",
+    "https://www.gravit.top",
+  ];
+
+  async function check(url) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 1200);  // 1.2 秒超时
+      const res = await fetch(url, { method: "HEAD", mode: "no-cors", signal: controller.signal });
+      clearTimeout(timer);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async function findBest() {
+    for (let i = 0; i < urls.length; i++) {
+      document.getElementById("status").innerText = "检测线路：" + urls[i];
+      const ok = await check(urls[i]);
+      if (ok) return urls[i];
+    }
+    return null;
+  }
+
+  findBest().then(best => {
+    if (best) {
+      document.getElementById("status").innerText = "成功，正在跳转：" + best;
+      setTimeout(() => { window.location.href = best; }, 300);
     } else {
-      const urls = [
-        "https://www.renyimen.sbs",
-        "https://renyimen.sbs",
-      ];
-      const targetUrl = urls[0];
-      document.getElementById("status").innerText = "正在跳转至：" + targetUrl;
-      setTimeout(() => {
-        window.location.href = targetUrl;
-      }, 800);
+      document.getElementById("status").innerText = "所有线路均不可用，请稍后再试";
     }
-
-    function copyLink() {
-      const dummy = document.createElement("input");
-      dummy.value = window.location.href;
-      document.body.appendChild(dummy);
-      dummy.select();
-      document.execCommand("copy");
-      document.body.removeChild(dummy);
-      alert("已复制跳转页链接，可粘贴保存！");
-    }
-  </script>
+  });
+}
+</script>
 </body>
 </html>
