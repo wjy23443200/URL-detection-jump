@@ -55,7 +55,7 @@ if (/MicroMessenger|QQ\/|baiduboxapp|QQMail/i.test(ua)) {
       document.getElementById("status").innerText = "成功，正在跳转：" + best;
       setTimeout(() => { window.location.href = best; }, 300);
     } else {
-      document.getElementById("status").innerText = "所有线路均不可用，请稍后再试";
+      document.getElementById("status").innerText = "自动分配的线路均不可用，尝试手动复制renyimen.sbs或yiciyuan.top到浏览器尝试，进不去尝试不同运营商网络";
     }
   });
 }
